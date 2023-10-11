@@ -8,6 +8,12 @@ LIMIT 1;
 
  
 --     b. Repeat the above, but this time report the nppes_provider_first_name, nppes_provider_last_org_name,  specialty_description, and the total number of claims.
+SELECT npi, nppes_provider_first_name, nppes_provider_last_org_name, specialty_description, total_claim_count
+FROM prescription
+LEFT JOIN prescriber
+USING (npi)
+ORDER BY total_claim_count DESC
+LIMIT 1;
 
 -- 2. 
 --     a. Which specialty had the most total number of claims (totaled over all drugs)?
