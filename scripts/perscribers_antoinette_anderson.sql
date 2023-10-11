@@ -5,7 +5,7 @@ FROM prescription
 ORDER BY total_claim_count DESC
 LIMIT 1;
 
-
+-- Prescriber 1912011792
  
 --     b. Repeat the above, but this time report the nppes_provider_first_name, nppes_provider_last_org_name,  specialty_description, and the total number of claims.
 SELECT npi, nppes_provider_first_name, nppes_provider_last_org_name, specialty_description, total_claim_count
@@ -15,6 +15,8 @@ USING (npi)
 ORDER BY total_claim_count DESC
 LIMIT 1;
 
+-- Daivd Coffey, Family Practice, Total Claim: 4538
+
 -- 2. 
 --     a. Which specialty had the most total number of claims (totaled over all drugs)?
 SELECT specialty_description, total_claim_count, prescription.npi
@@ -22,17 +24,12 @@ FROM prescriber
 INNER JOIN prescription
 USING (npi)
 ORDER BY total_claim_count DESC
-LIMIT 1;
+
+
+-- Family Practice
+
 
 --     b. Which specialty had the most total number of claims for opioids?
-SELECT prescriber.specialty_description, drug.opioid_drug_flag, prescription.total_claim_count
-FROM prescriber
-INNER JOIN drug
-ON prescriber.specialty_description = drug.opioid_drug_flag
-LEFT JOIN prescription
-USING (npi)
-WHERE drug.opioid_drug_flag ='Y';
-
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
 
@@ -40,20 +37,47 @@ WHERE drug.opioid_drug_flag ='Y';
 
 -- 3. 
 --     a. Which drug (generic_name) had the highest total drug cost?
+SELECT drug.generic_name, prescription.total_drug_cost, total_drug_cost_ge65
+FROM drug
+INNER JOIN prescription
+USING (drug_name)
+ORDER BY prescription.total_drug_cost DESC
+
+-- Pirfenidone
+
 
 --     b. Which drug (generic_name) has the hightest total cost per day? **Bonus: Round your cost per day column to 2 decimal places. Google ROUND to see how this works.**
 
+
 -- 4. 
 --     a. For each drug in the drug table, return the drug name and then a column named 'drug_type' which says 'opioid' for drugs which have opioid_drug_flag = 'Y', says 'antibiotic' for those drugs which have antibiotic_drug_flag = 'Y', and says 'neither' for all other drugs.
+
 
 --     b. Building off of the query you wrote for part a, determine whether more was spent (total_drug_cost) on opioids or on antibiotics. Hint: Format the total costs as MONEY for easier comparision.
 
 -- 5. 
 --     a. How many CBSAs are in Tennessee? **Warning:** The cbsa table contains information for all states, not just Tennessee.
+SELECT COUNT (cbsaname) AS cbsa_name_count
+FROM cbsa
+WHERE cbsaname LIKE '%TN%'
+
+-- There are 56 cbsa in Tennessee 
 
 --     b. Which cbsa has the largest combined population? Which has the smallest? Report the CBSA name and total population.
 
+SELECT  cbsa.cbsaname, population.population
+FROM population
+INNER JOIN cbsa
+USING (fipscounty)
+ORDER By population.population DESC
+
+
 --     c. What is the largest (in terms of population) county which is not included in a CBSA? Report the county name and population.
+SELECT fips_county.county, population.population
+FROM fips_county
+INNER JOIN population
+USING (fipscounty)
+ORDER BY population DESC;
 
 -- 6. 
 --     a. Find all rows in the prescription table where total_claims is at least 3000. Report the drug_name and the total_claim_count.
