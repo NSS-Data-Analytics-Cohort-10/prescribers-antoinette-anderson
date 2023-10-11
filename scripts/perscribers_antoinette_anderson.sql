@@ -17,8 +17,22 @@ LIMIT 1;
 
 -- 2. 
 --     a. Which specialty had the most total number of claims (totaled over all drugs)?
+SELECT specialty_description, total_claim_count, prescription.npi
+FROM prescriber
+INNER JOIN prescription
+USING (npi)
+ORDER BY total_claim_count DESC
+LIMIT 1;
 
 --     b. Which specialty had the most total number of claims for opioids?
+SELECT prescriber.specialty_description, drug.opioid_drug_flag, prescription.total_claim_count
+FROM prescriber
+INNER JOIN drug
+ON prescriber.specialty_description = drug.opioid_drug_flag
+LEFT JOIN prescription
+USING (npi)
+WHERE drug.opioid_drug_flag ='Y';
+
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
 
