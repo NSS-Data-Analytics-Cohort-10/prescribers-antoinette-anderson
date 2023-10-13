@@ -30,6 +30,11 @@ ORDER BY total_claim_count DESC
 
 
 --     b. Which specialty had the most total number of claims for opioids?
+SELECT specialty_description, drug.drug_name, opioid_drug_flag
+FROM prescriber
+USING prescriber.specialty_description = drug.drug_name
+
+
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
 
