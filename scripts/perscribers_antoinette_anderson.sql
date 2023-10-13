@@ -30,10 +30,17 @@ ORDER BY total_claim_count DESC
 
 
 --     b. Which specialty had the most total number of claims for opioids?
-SELECT specialty_description, drug.drug_name, opioid_drug_flag
-FROM prescriber
-USING prescriber.specialty_description = drug.drug_name
+SELECT COUNT(total_claim_count) as opioid_claim_count, opioid_drug_flag, prescriber.specialty_description
+FROM prescription
+LEFT JOIN drug
+USING (drug_name)
+LEFT JOIN prescriber
+USING (npi)
+WHERE opioid_drug_flag ='Y'
+GROUP BY opioid_drug_flag, prescriber.specialty_description
+ORDER BY opioid_claim_count DESC;
 
+-- Nurse Practitioner
 
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
