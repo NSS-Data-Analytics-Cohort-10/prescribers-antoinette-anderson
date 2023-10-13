@@ -45,6 +45,18 @@ ORDER BY opioid_claim_count DESC;
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
 
+SELECT COUNT(prescription.drug_name)AS prescription_drugs, prescriber.specialty_description
+FROM prescription
+FULL JOIN prescriber
+USING(npi)
+GROUP BY prescriber.specialty_description
+ORDER BY prescription_drugs 
+
+-- There are 15 specialties that have no associated prescriptions. 
+
+
+
+
 --     d. **Difficult Bonus:** *Do not attempt until you have solved all other problems!* For each specialty, report the percentage of total claims by that specialty which are for opioids. Which specialties have a high percentage of opioids?
 
 -- 3. 
