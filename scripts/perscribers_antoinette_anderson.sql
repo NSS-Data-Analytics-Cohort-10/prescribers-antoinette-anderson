@@ -59,6 +59,8 @@ ORDER BY prescription_drugs
 
 --     d. **Difficult Bonus:** *Do not attempt until you have solved all other problems!* For each specialty, report the percentage of total claims by that specialty which are for opioids. Which specialties have a high percentage of opioids?
 
+
+
 -- 3. 
 --     a. Which drug (generic_name) had the highest total drug cost?
 SELECT drug.generic_name, prescription.total_drug_cost, total_drug_cost_ge65
@@ -71,13 +73,26 @@ ORDER BY prescription.total_drug_cost DESC
 
 
 --     b. Which drug (generic_name) has the hightest total cost per day? **Bonus: Round your cost per day column to 2 decimal places. Google ROUND to see how this works.**
+SELECT total_drug_cost/30, generic_name
+FROM prescription
+INNER JOIN drug
+USING(drug_name)
+ORDER BY total_drug_cost DESC;
 
 
 -- 4. 
 --     a. For each drug in the drug table, return the drug name and then a column named 'drug_type' which says 'opioid' for drugs which have opioid_drug_flag = 'Y', says 'antibiotic' for those drugs which have antibiotic_drug_flag = 'Y', and says 'neither' for all other drugs.
-
+SELECT drug_name,
+CASE WHEN opioid_drug_flag = 'Y' THEN 'opioid'
+	 WHEN antibiotic_drug_flag = 'Y' THEN 'antibiotic'
+ELSE 'neither'
+END AS drug_type
+FROM drug;
 
 --     b. Building off of the query you wrote for part a, determine whether more was spent (total_drug_cost) on opioids or on antibiotics. Hint: Format the total costs as MONEY for easier comparision.
+
+
+
 
 -- 5. 
 --     a. How many CBSAs are in Tennessee? **Warning:** The cbsa table contains information for all states, not just Tennessee.
@@ -114,14 +129,47 @@ SELECT drug_name , total_claim_count, opioid_drug_flag
 FROM prescription
 INNER JOIN drug
 USING (drug_name)
-WHERE total_claim_count > 3000;
+WHERE total_claim_count > 3000
+	AND opioid_drug_flag ='Y'
 
 --     c. Add another column to you answer from the previous part which gives the prescriber first and last name associated with each row.
 
-
+SELECT drug_name , total_claim_count, opioid_drug_flag, nppes_provider_first_name, nppes_provider_last_org_name
+FROM prescription
+INNER JOIN drug
+USING (drug_name)
+INNER JOIN prescriber
+USING (npi)
+WHERE total_claim_count > 3000
+	AND opioid_drug_flag ='Y'
+	
+	
 -- 7. The goal of this exercise is to generate a full list of all pain management specialists in Nashville and the number of claims they had for each opioid. **Hint:** The results from all 3 parts will have 637 rows.
 
 --     a. First, create a list of all npi/drug_name combinations for pain management specialists (specialty_description = 'Pain Management) in the city of Nashville (nppes_provider_city = 'NASHVILLE'), where the drug is an opioid (opiod_drug_flag = 'Y'). **Warning:** Double-check your query before running it. You will only need to use the prescriber and drug tables since you don't need the claims numbers yet.
+
+SELECT drug_name, specialty_description, nppes_provider_city, opioid_drug_flag
+FROM prescription
+LEFT JOIN prescriber
+USING (npi)
+LEFT JOIN drug
+USING (drug_name)
+WHERE specialty_description = 'Pain Management'
+	AND nppes_provider_city = 'Nashville'
+	AND opioid_drug_flag = 'Y';
+
+SELECT specialty_description, prescription.drug_name, nppes_provider_city, opioid_drug_flag
+FROM prescriber
+INNER JOIN prescription
+USING (npi)
+INNER JOIN drug
+ON prescriber.description_flag = drug.drug_name
+WHERE specialty_description ='Pain Management' AND nppes_provider_city= 'NASHVILLE' AND opioid_drug_flag = 'Y'
+
+	
+	
+
+
 
 --     b. Next, report the number of claims per drug per prescriber. Be sure to include all combinations, whether or not the prescriber had any claims. You should report the npi, the drug name, and the number of claims (total_claim_count).
     
