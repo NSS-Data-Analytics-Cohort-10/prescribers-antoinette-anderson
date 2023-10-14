@@ -91,7 +91,21 @@ FROM drug;
 
 --     b. Building off of the query you wrote for part a, determine whether more was spent (total_drug_cost) on opioids or on antibiotics. Hint: Format the total costs as MONEY for easier comparision.
 
+SELECT SUM(total_drug_cost) as drug_cost, opioid_drug_flag AS opioids, antibiotic_drug_flag as antibiotics
+FROM prescription
+INNER JOIN drug
+USING (drug_name)
+WHERE opioid_drug_flag = 'Y' 
+GROUP BY opioid_drug_flag, antibiotic_drug_flag
+UNION
+SELECT SUM (total_drug_cost) AS drug_cost, antibiotic_drug_flag AS antibiotics, opioid_drug_flag AS opioids
+FROM prescription
+INNER JOIN drug
+USING (drug_name)
+WHERE antibiotic_drug_flag = 'Y'
+GROUP BY antibiotic_drug_flag, opioid_drug_flag
 
+     
 
 
 -- 5. 
