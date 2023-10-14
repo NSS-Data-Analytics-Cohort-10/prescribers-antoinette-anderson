@@ -170,3 +170,10 @@ ORDER BY total_claim_count
 	
 	
 --     c. Finally, if you have not done so already, fill in any missing values for total_claim_count with 0. Hint - Google the COALESCE function.
+
+SELECT  nppes_provider_last_org_name, nppes_provider_first_name, npi, prescription.drug_name, COALESCE(total_claim_count, '0') AS total_claims
+FROM prescriber
+FULL JOIN prescription
+USING (npi)
+ORDER BY total_claim_count DESC;
+
