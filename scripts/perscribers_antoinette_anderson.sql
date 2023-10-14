@@ -148,14 +148,14 @@ WHERE total_claim_count > 3000
 
 --     a. First, create a list of all npi/drug_name combinations for pain management specialists (specialty_description = 'Pain Management) in the city of Nashville (nppes_provider_city = 'NASHVILLE'), where the drug is an opioid (opiod_drug_flag = 'Y'). **Warning:** Double-check your query before running it. You will only need to use the prescriber and drug tables since you don't need the claims numbers yet.
 
-SELECT drug_name, specialty_description, nppes_provider_city, opioid_drug_flag
+SELECT prescription.npi, drug_name, specialty_description, nppes_provider_city, opioid_drug_flag
 FROM prescription
 LEFT JOIN prescriber
 USING (npi)
 LEFT JOIN drug
 USING (drug_name)
 WHERE specialty_description = 'Pain Management'
-	AND nppes_provider_city = 'Nashville'
+	AND nppes_provider_city = 'NASHVILLE'
 	AND opioid_drug_flag = 'Y';
 
 SELECT specialty_description, prescription.drug_name, nppes_provider_city, opioid_drug_flag
